@@ -1,4 +1,4 @@
-package com.zhaojun3
+package com.zhaojun
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

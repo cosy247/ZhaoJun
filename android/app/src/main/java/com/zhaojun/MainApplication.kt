@@ -1,4 +1,4 @@
-package com.zhaojun3
+package com.zhaojun
 
 import android.app.Application
 import com.facebook.react.PackageList
