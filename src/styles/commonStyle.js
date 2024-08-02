@@ -25,5 +25,4 @@ export default {
     shadowOpacity: 1,
     shadowRadius: 1,
   },
-  pageTitle: {},
 };

@@ -11,8 +11,8 @@ const menuList = [
     activeIcon: '\ue606',
     childrenIndex: 0,
     childrens: [
-      { name: '分类任务', page: 'categoryTask' },
       { name: '日任务', page: 'dayTask' },
+      { name: '分类任务', page: 'categoryTask' },
       { name: '周任务', page: 'weekTask' },
       { name: '月任务', page: 'monthTask' },
     ],
@@ -38,12 +38,12 @@ const menuList = [
     activeIcon: '\ue601',
     childrenIndex: 0,
     childrens: [{ name: '设置' }],
-  }
+  },
 ];
 
 function Menutabs() {
   const [lastMenuIndex, changeLastMenuIndex] = useState(0);
-  const [childrenName, changeChildrenName] = useState('');
+  // const [childrenName, changeChildrenName] = useState('');
   const [renderKey, changeRenderKey] = useState(0);
 
   function gotoMenu(menuIndex) {
@@ -54,14 +54,14 @@ function Menutabs() {
       changeLastMenuIndex(menuIndex);
     }
     const targetMenu = menuList[menuIndex].childrens[menuList[menuIndex].childrenIndex];
-    changeChildrenName(targetMenu.name);
+    // changeChildrenName(targetMenu.name);
     store.changePage(targetMenu.page);
     changeRenderKey(renderKey + 1);
   }
 
   return (
     <View style={styles.container}>
-      <Animation
+      {/* <Animation
         isText={true}
         style={styles.childrenName}
         animationStyle={{ opacity: [1, 0] }}
@@ -69,7 +69,7 @@ function Menutabs() {
         renderKey={renderKey}
         isStartRender={false}>
         {childrenName}
-      </Animation>
+      </Animation> */}
       <View style={styles.menus}>
         {menuList.map((menuItem, index) => (
           <TouchableWithoutFeedback onPress={() => gotoMenu(index)} key={index}>

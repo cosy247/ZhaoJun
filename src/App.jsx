@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, StatusBar, useColorScheme, StyleSheet, Text, ScrollView, View } from 'react-native';
 import store from './store';
 
-import TaskPage from './pages/TaskPage';
+import DayTaskPage from './pages/DayTaskPage';
 import CraeteTaskPage from './pages/CraeteTaskPage';
 import MenuTabs from './components/MenuTabs';
 import Message from './components/Message';
@@ -10,7 +10,7 @@ import Message from './components/Message';
 const backgroundColor = '#f6f7fa';
 
 export default function App() {
-  const [page, changePage] = useState('TaskPage');
+  const [page, changePage] = useState('dayTask');
 
   store.changePage = changePage;
 
@@ -19,7 +19,7 @@ export default function App() {
       <StatusBar barStyle='dark-content' backgroundColor={backgroundColor} />
       {
         {
-          categoryTask: <TaskPage />,
+          dayTask: <DayTaskPage />,
           craeteTask: <CraeteTaskPage />,
         }[page]
       }
