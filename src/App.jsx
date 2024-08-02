@@ -1,26 +1,29 @@
-import React from 'react';
-import { SafeAreaView, StatusBar, useColorScheme, StyleSheet } from 'react-native';
-import Home from './pages/Home';
+import React, { useState } from 'react';
+import { SafeAreaView, StatusBar, useColorScheme, StyleSheet, Text, ScrollView, View } from 'react-native';
+import store from './store';
+
+import TaskPage from './pages/TaskPage';
+import CraeteTaskPage from './pages/CraeteTaskPage';
 import MenuTabs from './components/MenuTabs';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import "react-native-gesture-handler";
+import Message from './components/Message';
 
-const backgroundColor = '#fcfefd';
+const backgroundColor = '#f6f7fa';
 
-// const Stack = createNativeStackNavigator();
+export default function App() {
+  const [page, changePage] = useState('TaskPage');
 
-function App() {
+  store.changePage = changePage;
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle='dark-content' backgroundColor={backgroundColor} />
-      {/* <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name='Home' component={Home} />
-          <Stack.Screen name='Hom2e' component={Home} />
-        </Stack.Navigator>
-      </NavigationContainer> */}
-      <Home></Home>
+      {
+        {
+          categoryTask: <TaskPage />,
+          craeteTask: <CraeteTaskPage />,
+        }[page]
+      }
+      <Message/>
       <MenuTabs />
     </SafeAreaView>
   );
@@ -32,5 +35,3 @@ const styles = StyleSheet.create({
     backgroundColor: backgroundColor,
   },
 });
-
-export default App;

@@ -16,7 +16,8 @@ const DATA = [
   },
 ];
 
-export default () => {
+export default function TaskPage() {
+
   return (
     <View>
       <View style={styles.header}>
@@ -28,6 +29,7 @@ export default () => {
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => <Text>{item.title}</Text>}
       />
+      
     </View>
   );
 };

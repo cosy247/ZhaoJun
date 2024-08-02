@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 
 function Animation(props) {
   const [style] = useState(
@@ -18,11 +18,13 @@ function Animation(props) {
 
   Object.entries(props.animationStyle).forEach(([attr, [from, to]]) => {
     useEffect(() => {
-      Animated.timing(style[attr], {
-        toValue: to,
-        duration: props.duration,
-        useNativeDriver: false,
-      }).start();
+      setTimeout(() => {
+        Animated.timing(style[attr], {
+          toValue: to,
+          duration: props.duration,
+          useNativeDriver: false,
+        }).start();
+      }, props.delay || 0);
     }, [style[attr], props.renderKey]);
   });
 

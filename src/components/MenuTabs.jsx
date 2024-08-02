@@ -3,13 +3,19 @@ import { useState } from 'react';
 
 import commonStyles from '../styles/commonStyle';
 import Animation from './Animation';
+import store from '../store';
 
 const menuList = [
   {
     icon: '\ue701',
     activeIcon: '\ue606',
     childrenIndex: 0,
-    childrens: [{ name: '分类任务' }, { name: '日任务' }, { name: '周任务' }, { name: '月任务' }],
+    childrens: [
+      { name: '分类任务', page: 'categoryTask' },
+      { name: '日任务', page: 'dayTask' },
+      { name: '周任务', page: 'weekTask' },
+      { name: '月任务', page: 'monthTask' },
+    ],
   },
   {
     icon: '\ue702',
@@ -21,14 +27,18 @@ const menuList = [
     icon: '\ue875',
     activeIcon: '\ue600',
     childrenIndex: 0,
-    childrens: [{ name: '新增' }],
+    childrens: [
+      { name: '新增任务', page: 'craeteTask' },
+      { name: '新增习惯', page: 'craeteHabit' },
+      { name: '新增倒计时', page: 'craeteCountdown' },
+    ],
   },
   {
     icon: '\ue703',
     activeIcon: '\ue601',
     childrenIndex: 0,
     childrens: [{ name: '设置' }],
-  },
+  }
 ];
 
 function Menutabs() {
@@ -40,11 +50,12 @@ function Menutabs() {
     if (lastMenuIndex === menuIndex) {
       menuList[menuIndex].childrenIndex += 1;
       menuList[menuIndex].childrenIndex %= menuList[menuIndex].childrens.length;
-      changeChildrenName(menuList[menuIndex].childrens[menuList[menuIndex].childrenIndex].name);
     } else {
       changeLastMenuIndex(menuIndex);
-      changeChildrenName(menuList[menuIndex].childrens[menuList[menuIndex].childrenIndex].name);
     }
+    const targetMenu = menuList[menuIndex].childrens[menuList[menuIndex].childrenIndex];
+    changeChildrenName(targetMenu.name);
+    store.changePage(targetMenu.page);
     changeRenderKey(renderKey + 1);
   }
 
@@ -63,15 +74,17 @@ function Menutabs() {
         {menuList.map((menuItem, index) => (
           <TouchableWithoutFeedback onPress={() => gotoMenu(index)} key={index}>
             {lastMenuIndex === index ? (
-              <Animation
-                isText={true}
-                style={styles.menu}
-                animationStyle={{ opacity: [0.5, 1] }}
-                duration={500}
-                renderKey={renderKey}
-                isStartRender={false}>
-                {menuItem.activeIcon}
-              </Animation>
+              <View>
+                <Animation
+                  isText={true}
+                  style={styles.menu}
+                  animationStyle={{ opacity: [0.5, 1] }}
+                  duration={500}
+                  renderKey={renderKey}
+                  isStartRender={false}>
+                  {menuItem.activeIcon}
+                </Animation>
+              </View>
             ) : (
               <Text style={styles.menu}>{menuItem.icon}</Text>
             )}
@@ -85,14 +98,14 @@ function Menutabs() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 30,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   childrenName: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 18,
+    marginBottom: 5,
   },
   menus: {
     ...commonStyles.rowFlex,
@@ -100,7 +113,7 @@ const styles = StyleSheet.create({
     gap: 25,
     backgroundColor: '#fff',
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     borderRadius: 100,
   },
   menu: {
