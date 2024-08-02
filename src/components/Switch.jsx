@@ -4,16 +4,16 @@ import userSetting from '../store/userSetting';
 import commonStyle from '../styles/commonStyle';
 import Animation from './Animation';
 
-export default function Switch(props) {
-  const [value, changeValue] = useState(props.value);
+export default function Switch({value, thumbStyle, trackStyle}) {
+  const [cValue, changeCValue] = useState(value);
 
   return (
-    <TouchableWithoutFeedback onPress={() => changeValue(!value)}>
+    <TouchableWithoutFeedback onPress={() => changeCValue(!cValue)}>
       <Animation
         animationStyle={{
       }}>
-        <View style={[value ? styles.thumbActive : styles.thumb, props.thumbStyle]}>
-          <View style={[value ? styles.trackActive : styles.track, props.trackStyle]}></View>
+        <View style={[cValue ? styles.thumbActive : styles.thumb, thumbStyle]}>
+          <View style={[cValue ? styles.trackActive : styles.track, trackStyle]}></View>
         </View>
       </Animation>
     </TouchableWithoutFeedback>

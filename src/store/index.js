@@ -1,4 +1,5 @@
 export default store = {
+  isReady: false,
   changePage: undefined,
   overTypes: [
     { type: 'endTime', name: '时间' },

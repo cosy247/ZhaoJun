@@ -13,29 +13,29 @@ import userSetting from '../store/userSetting';
 import DatePicker from 'react-native-date-picker';
 import commonStyle from '../styles/commonStyle';
 import store from '../store';
-import tasks from '../store/tasks';
+import taskApis from '../store/taskApis';
 import PageOuter from './PageOuter';
 
-function TaskItem(props) {
+function TaskItem({ style, title, children }) {
   return (
-    <View style={[styles.taskItem, props.style]}>
+    <View style={[styles.taskItem, style]}>
       <View style={styles.taskItemHeader}>
         <View style={styles.taskItemCircle} />
-        <Text style={styles.taskItemTitle}>{props.title}</Text>
+        <Text style={styles.taskItemTitle}>{title}</Text>
       </View>
-      {props.children && <View style={styles.taskItemContent}>{props.children}</View>}
+      {children && <View style={styles.taskItemContent}>{children}</View>}
     </View>
   );
 }
 
-function LineItem(props) {
+function LineItem({ marginTop, title, contentTyle, children, describe }) {
   return (
-    <View style={{ marginTop: props.marginTop || 15 }}>
+    <View style={{ marginTop: marginTop || 15 }}>
       <View style={styles.lineItem}>
-        <Text style={styles.lineItemTile}>{props.title}</Text>
-        <View style={props.contentTyle}>{props.children}</View>
+        <Text style={styles.lineItemTile}>{title}</Text>
+        <View style={contentTyle}>{children}</View>
       </View>
-      {props.describe && <Text style={styles.lineItemDescribe}>{props.describe}</Text>}
+      {describe && <Text style={styles.lineItemDescribe}>{describe}</Text>}
     </View>
   );
 }
@@ -65,7 +65,7 @@ export default function CraeteTask() {
     if (task.name === '') {
       store.message.warnning('请输入任务名称！');
     } else {
-      tasks.addOrEditTask(task);
+      taskApis.addOrEditTask({ ...task });
       store.message.success('创建任务成功！');
       changeTask({ ...task, name: '' });
     }
@@ -105,202 +105,208 @@ export default function CraeteTask() {
 
   return (
     <PageOuter title='新增任务'>
-      <TextInput
-        multiline={true}
-        value={task.name}
-        style={styles.nameInput}
-        placeholder='任务名称'
-        onChangeText={(name) => changeTask({ ...task, name })}
-      />
-      <TaskItem title='任务类别'>
-        <View style={styles.categorys}>
-          {userSetting.taskCategorys.map((taskCategory) => (
-            <TouchableWithoutFeedback
-              onPress={() => changeTask({ ...task, categoryId: taskCategory.id })}
-              key={taskCategory.id}>
-              <Text style={taskCategory.id === task.categoryId ? styles.categoryActive : styles.category}>
-                {taskCategory.name}
-              </Text>
-            </TouchableWithoutFeedback>
-          ))}
-        </View>
-      </TaskItem>
-      <TaskItem title='执行时间'>
-        <LineItem title='全天'>
-          <Switch
-            trackColor={{ false: '#aaa', true: userSetting.themeColor }}
-            thumbColor={task.isAllDay ? userSetting.themeColor : '#eee'}
-            value={task.isAllDay}
-            onValueChange={(isAllDay) => changeTask({ ...task, isAllDay })}
-          />
-        </LineItem>
-        <LineItem title='结束方式'>
-          <View style={[styles.categorys, { marginTop: 0 }]}>
-            {store.overTypes.map((overType) => (
+      <ScrollView style={styles.container}>
+        <TextInput
+          multiline={true}
+          value={task.name}
+          style={styles.nameInput}
+          placeholder='任务名称'
+          onChangeText={(name) => changeTask({ ...task, name })}
+        />
+        <TaskItem title='任务类别'>
+          <View style={styles.categorys}>
+            {userSetting.taskCategorys.map((taskCategory) => (
               <TouchableWithoutFeedback
-                onPress={() => changeTask({ ...task, overType: overType.type })}
-                key={overType.type}>
-                <Text style={overType.type === task.overType ? styles.categoryActive : styles.category}>
-                  {overType.name}
+                onPress={() => changeTask({ ...task, categoryId: taskCategory.id })}
+                key={taskCategory.id}>
+                <Text style={taskCategory.id === task.categoryId ? styles.categoryActive : styles.category}>
+                  {taskCategory.name}
                 </Text>
               </TouchableWithoutFeedback>
             ))}
           </View>
-        </LineItem>
-        <LineItem title='开始时间'>
-          <View style={styles.lineItemDateShow}>
-            <TouchableWithoutFeedback
-              onPress={() =>
-                changeDatePicker({
-                  isOpen: true,
-                  mode: 'date',
-                  data: task.startTime,
-                  changeData: (startTime) => changeStartTime(startTime, 'd'),
-                })
-              }>
-              <Text style={styles.lineItemValue}>
-                {task.startTime.toLocaleDateString('zh', {
-                  year: 'numeric',
-                  month: 'narrow',
-                  day: 'numeric',
-                })}
-              </Text>
-            </TouchableWithoutFeedback>
-            {task.isAllDay || (
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  changeDatePicker({
-                    isOpen: true,
-                    mode: 'time',
-                    data: task.startTime,
-                    changeData: (startTime) => changeStartTime(startTime, 't'),
-                  })
-                }>
-                <Text style={styles.lineItemValue}>
-                  {task.startTime.toLocaleTimeString('zh').slice(0, -3)}
-                </Text>
-              </TouchableWithoutFeedback>
-            )}
-          </View>
-        </LineItem>
-        {task.overType === 'endTime' && (
-          <LineItem title='结束时间'>
+        </TaskItem>
+        <TaskItem title='执行时间'>
+          <LineItem title='全天'>
+            <Switch
+              trackColor={{ false: '#aaa', true: userSetting.themeColor }}
+              thumbColor={task.isAllDay ? userSetting.themeColor : '#eee'}
+              value={task.isAllDay}
+              onValueChange={(isAllDay) => changeTask({ ...task, isAllDay })}
+            />
+          </LineItem>
+          <LineItem title='结束方式'>
+            <View style={[styles.categorys, { marginTop: 0 }]}>
+              {store.overTypes.map((overType) => (
+                <TouchableWithoutFeedback
+                  onPress={() => changeTask({ ...task, overType: overType.type })}
+                  key={overType.type}>
+                  <Text style={overType.type === task.overType ? styles.categoryActive : styles.category}>
+                    {overType.name}
+                  </Text>
+                </TouchableWithoutFeedback>
+              ))}
+            </View>
+          </LineItem>
+          <LineItem title='开始时间'>
             <View style={styles.lineItemDateShow}>
               <TouchableWithoutFeedback
                 onPress={() =>
                   changeDatePicker({
                     isOpen: true,
                     mode: 'date',
-                    data: task.endTime,
-                    changeData: (endTime) => changeEndTime(endTime, 'd'),
+                    data: task.startTime,
+                    changeData: (startTime) => changeStartTime(startTime, 'd'),
                   })
                 }>
                 <Text style={styles.lineItemValue}>
-                  {task.endTime.toLocaleDateString('zh', {
+                  {task.startTime.toLocaleDateString('zh', {
                     year: 'numeric',
                     month: 'narrow',
                     day: 'numeric',
                   })}
                 </Text>
               </TouchableWithoutFeedback>
-              {!task.isAllDay && (
+              {task.isAllDay || (
                 <TouchableWithoutFeedback
                   onPress={() =>
                     changeDatePicker({
                       isOpen: true,
                       mode: 'time',
-                      data: task.endTime,
-                      changeData: (endTime) => changeEndTime(endTime, 't'),
+                      data: task.startTime,
+                      changeData: (startTime) => changeStartTime(startTime, 't'),
                     })
                   }>
                   <Text style={styles.lineItemValue}>
-                    {task.endTime.toLocaleTimeString('zh').slice(0, -3)}
+                    {task.startTime.toLocaleTimeString('zh').slice(0, -3)}
                   </Text>
                 </TouchableWithoutFeedback>
               )}
             </View>
           </LineItem>
-        )}
-      </TaskItem>
-      <TaskItem title='打卡行为'>
-        <LineItem title='完成次数'>
-          <TextInput
-            value={task.times}
-            onBlur={(times) => changeTask({ ...task, times: `${Number(times) || 1}` })}
-            style={styles.taskTimesInput}
-          />
-        </LineItem>
-        {task.overType === 'endTime' && (
-          <LineItem title='自动重置打卡次数'>
-            <Switch
-              trackColor={{ false: '#aaa', true: userSetting.themeColor }}
-              thumbColor={task.autoResetTimes ? userSetting.themeColor : '#eee'}
-              value={task.autoResetTimes}
-              onValueChange={(autoResetTimes) => changeTask({ ...task, autoResetTimes })}
-            />
-          </LineItem>
-        )}
-        {task.overType === 'endTime' && task.autoResetTimes && (
-          <LineItem title='重置间隔' contentTyle={styles.lineItemDateShow}>
+          {task.overType === 'endTime' && (
+            <LineItem title='结束时间'>
+              <View style={styles.lineItemDateShow}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    changeDatePicker({
+                      isOpen: true,
+                      mode: 'date',
+                      data: task.endTime,
+                      changeData: (endTime) => changeEndTime(endTime, 'd'),
+                    })
+                  }>
+                  <Text style={styles.lineItemValue}>
+                    {task.endTime.toLocaleDateString('zh', {
+                      year: 'numeric',
+                      month: 'narrow',
+                      day: 'numeric',
+                    })}
+                  </Text>
+                </TouchableWithoutFeedback>
+                {!task.isAllDay && (
+                  <TouchableWithoutFeedback
+                    onPress={() =>
+                      changeDatePicker({
+                        isOpen: true,
+                        mode: 'time',
+                        data: task.endTime,
+                        changeData: (endTime) => changeEndTime(endTime, 't'),
+                      })
+                    }>
+                    <Text style={styles.lineItemValue}>
+                      {task.endTime.toLocaleTimeString('zh').slice(0, -3)}
+                    </Text>
+                  </TouchableWithoutFeedback>
+                )}
+              </View>
+            </LineItem>
+          )}
+        </TaskItem>
+        <TaskItem title='打卡行为'>
+          <LineItem title='完成次数'>
             <TextInput
               value={task.times}
               onBlur={(times) => changeTask({ ...task, times: `${Number(times) || 1}` })}
               style={styles.taskTimesInput}
             />
-            {store.taskTimesResetTypes.map((timesResetType) => (
-              <TouchableWithoutFeedback
-                onPress={() => changeTask({ ...task, timesResetType: timesResetType.type })}
-                key={timesResetType.type}>
-                <Text
-                  style={
-                    timesResetType.type === task.timesResetType ? styles.categoryActive : styles.category
-                  }>
-                  {timesResetType.name}
-                </Text>
-              </TouchableWithoutFeedback>
-            ))}
           </LineItem>
-        )}
-      </TaskItem>
-      <TaskItem title='备注'>
-        <TextInput
-          multiline={true}
-          value={task.remarks}
-          style={styles.remarks}
-          placeholder='在此输入'
-          onChange={(remarks) => changeTask({ ...task, remarks })}
+          {task.overType === 'endTime' && (
+            <LineItem title='自动重置打卡次数'>
+              <Switch
+                trackColor={{ false: '#aaa', true: userSetting.themeColor }}
+                thumbColor={task.autoResetTimes ? userSetting.themeColor : '#eee'}
+                value={task.autoResetTimes}
+                onValueChange={(autoResetTimes) => changeTask({ ...task, autoResetTimes })}
+              />
+            </LineItem>
+          )}
+          {task.overType === 'endTime' && task.autoResetTimes && (
+            <LineItem title='重置间隔' contentTyle={styles.lineItemDateShow}>
+              <TextInput
+                value={task.times}
+                onBlur={(times) => changeTask({ ...task, times: `${Number(times) || 1}` })}
+                style={styles.taskTimesInput}
+              />
+              {store.taskTimesResetTypes.map((timesResetType) => (
+                <TouchableWithoutFeedback
+                  onPress={() => changeTask({ ...task, timesResetType: timesResetType.type })}
+                  key={timesResetType.type}>
+                  <Text
+                    style={
+                      timesResetType.type === task.timesResetType ? styles.categoryActive : styles.category
+                    }>
+                    {timesResetType.name}
+                  </Text>
+                </TouchableWithoutFeedback>
+              ))}
+            </LineItem>
+          )}
+        </TaskItem>
+        <TaskItem title='备注'>
+          <TextInput
+            multiline={true}
+            value={task.remarks}
+            style={styles.remarks}
+            placeholder='在此输入'
+            onChange={(remarks) => changeTask({ ...task, remarks })}
+          />
+        </TaskItem>
+
+        <TouchableWithoutFeedback onPress={addTask}>
+          <View style={styles.submitOuter}>
+            <Text style={styles.submit}>创建</Text>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <DatePicker
+          modal
+          locale='zh'
+          mode={datePicker.mode}
+          title='时间选择'
+          is24hourSource='locale'
+          confirmText='确认'
+          cancelText='取消'
+          open={datePicker.isOpen}
+          date={task.startTime}
+          onConfirm={(date) => {
+            changeDatePicker({ ...datePicker, isOpen: false });
+            datePicker.changeData(date);
+          }}
+          onCancel={() => {
+            changeDatePicker({ ...datePicker, isOpen: false });
+          }}
         />
-      </TaskItem>
-
-      <TouchableWithoutFeedback onPress={addTask}>
-        <View style={styles.submitOuter}>
-          <Text style={styles.submit}>创建</Text>
-        </View>
-      </TouchableWithoutFeedback>
-
-      <DatePicker
-        modal
-        locale='zh'
-        mode={datePicker.mode}
-        title='时间选择'
-        is24hourSource='locale'
-        confirmText='确认'
-        cancelText='取消'
-        open={datePicker.isOpen}
-        date={task.startTime}
-        onConfirm={(date) => {
-          changeDatePicker({ ...datePicker, isOpen: false });
-          datePicker.changeData(date);
-        }}
-        onCancel={() => {
-          changeDatePicker({ ...datePicker, isOpen: false });
-        }}
-      />
+        <View style={{ height: 100 }}></View>
+      </ScrollView>
     </PageOuter>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 10,
+  },
   type: {
     fontSize: 15,
     backgroundColor: '#fff',

@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 
 import userSetting from '../store/userSetting';
 
-export default function CheckBox(props) {
-  const [ checked, changeChecked ] = useState(!!props.value);
+export default function CheckBox({ value, onChange }) {
+  const [checked, changeChecked] = useState(!!value);
 
   function handleChange(checked) {
     changeChecked(checked);
-    if (typeof props.onChange === 'function') {
-      props.onChange(checked);
+    if (typeof onChange === 'function') {
+      onChange(checked);
     }
   }
 

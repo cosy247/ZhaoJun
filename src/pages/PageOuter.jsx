@@ -1,14 +1,11 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 
-export default function TaskPage(props) {
+export default function TaskPage({title, children}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{props.title}</Text>
-      <ScrollView style={styles.content}>
-        {props.children}
-        <View style={styles.bottom}></View>
-      </ScrollView>
+      <Text style={styles.title}>{title}</Text>
+      {children}
     </View>
   );
 }

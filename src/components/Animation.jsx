@@ -1,37 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 import { Animated, View } from 'react-native';
 
-function Animation(props) {
-  const [style] = useState(
-    Object.entries(props.animationStyle).reduce((style, [attr, [from, to]]) => {
-      style[attr] = useRef(new Animated.Value(props.isStartRender ? from : to)).current;
+function Animation({ animationStyle, isStartRender, renderKey, duration, delay, isText, style, children }) {
+  const [cStyle] = useState(
+    Object.entries(animationStyle).reduce((style, [attr, [from, to]]) => {
+      style[attr] = useRef(new Animated.Value(isStartRender ? from : to)).current;
       return style;
     }, {})
   );
 
   useEffect(() => {
-    if (props.renderKey === 0) return;
-    Object.entries(props.animationStyle).forEach(([attr, [from, to]]) => {
-      style[attr].setValue(from);
+    if (renderKey === 0) return;
+    Object.entries(animationStyle).forEach(([attr, [from, to]]) => {
+      cStyle[attr].setValue(from);
     });
-  }, [props.renderKey]);
+  }, [renderKey]);
 
-  Object.entries(props.animationStyle).forEach(([attr, [from, to]]) => {
+  Object.entries(animationStyle).forEach(([attr, [from, to]]) => {
     useEffect(() => {
       setTimeout(() => {
-        Animated.timing(style[attr], {
+        Animated.timing(cStyle[attr], {
           toValue: to,
-          duration: props.duration,
+          duration: duration,
           useNativeDriver: false,
         }).start();
-      }, props.delay || 0);
-    }, [style[attr], props.renderKey]);
+      }, delay || 0);
+    }, [cStyle[attr], renderKey]);
   });
 
-  return props.isText ? (
-    <Animated.Text style={[props.style, style]}>{props.children}</Animated.Text>
+  return isText ? (
+    <Animated.Text style={[style, cStyle]}>{children}</Animated.Text>
   ) : (
-    <Animated.View style={[props.style, style]}>{props.children}</Animated.View>
+    <Animated.View style={[style, cStyle]}>{children}</Animated.View>
   );
 }
 

@@ -1,6 +1,6 @@
 import appStorage from './appStorage';
 
-const tasks = {
+const taskData = {
   key: 'tasks',
   list: [],
   idMap: {
@@ -21,29 +21,48 @@ const tasks = {
   },
 };
 
-appStorage.get(tasks.key).then((res) => {
-  tasks.idMap = res;
-  tasks.list = Object.values(res);
-});
+const readyCallbacks = [];
 
-export default {
+appStorage
+  .get(taskData.key)
+  .then((res) => {
+    taskData.idMap = res;
+    taskData.list = Object.values(res);
+  })
+  .finally(() => {
+    taskApis.isReady = true;
+    readyCallbacks.forEach((callback) => callback());
+    readyCallbacks.length = 0;
+  });
+
+const taskApis = {
+  isReady: false,
   addOrEditTask(task) {
     task.startTime = new Date(task.startTime).valueOf();
     task.endTime = new Date(task.endTime).valueOf();
     if (task.id) {
-      Object.assign(tasks.idMap[task.id], task);
+      Object.assign(taskData.idMap[task.id], task);
     } else {
       task.id = Date.now();
-      tasks.idMap[task.id] = task;
-      tasks.list.push(task);
+      taskData.idMap[task.id] = task;
+      taskData.list.push(task);
     }
-    appStorage.set(tasks.key, tasks.idMap);
+    appStorage.set(taskData.key, taskData.idMap);
   },
   getByTimeRange(start, end) {
     const startValue = new Date(start).valueOf();
     const endValue = new Date(end).valueOf();
-    return tasks.list
+    return taskData.list
       .filter((task) => task.startTime <= endValue && task.endTime >= startValue)
       .map((task) => ({ ...task }));
   },
+  onReady(callback) {
+    if (this.isReady) {
+      callback();
+    } else {
+      readyCallbacks.push(callback);
+    }
+  },
 };
+
+export default taskApis;
