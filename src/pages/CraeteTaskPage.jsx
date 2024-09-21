@@ -44,15 +44,27 @@ export default function CraeteTask() {
   const [task, changeTask] = useState({
     name: '',
     categoryId: userSetting.taskCategorys[0].id,
+
+    // 执行事件
     isAllDay: false,
+    overType: store.overTypes[0].type,
     startTime: new Date(),
     endTime: new Date(),
-    hasEndTime: true,
+
+    // 事件循环
+    taskCircularType: store.taskCircularTypes[0].type,
+
+    // 打卡行为
     times: '1',
-    autoResetTimes: false,
-    overType: store.overTypes[0].type,
+    autoResetTimes: true,
     timesResetType: store.taskTimesResetTypes[0].type,
+
+    // 备注
     remarks: '',
+
+    // 执行数据
+    clocks: [],
+    isOver: 0,
   });
   const [datePicker, changeDatePicker] = useState({
     isOpen: false,
@@ -223,6 +235,30 @@ export default function CraeteTask() {
             </LineItem>
           )}
         </TaskItem>
+        <TaskItem title='事件循环'>
+          <LineItem title='循环单位' contentTyle={styles.lineItemDateShow}>
+            {store.taskCircularTypes.map((taskCircularType) => (
+              <TouchableWithoutFeedback
+                onPress={() => changeTask({ ...task, taskCircularType: taskCircularType.type })}
+                key={taskCircularType.type}>
+                <Text
+                  style={
+                    taskCircularType.type === task.taskCircularType ? styles.categoryActive : styles.category
+                  }>
+                  {taskCircularType.name}
+                </Text>
+              </TouchableWithoutFeedback>
+            ))}
+          </LineItem>
+          <LineItem title='循环间隔' contentTyle={styles.lineItemDateShow}>
+            <TextInput
+              value={task.times}
+              onBlur={(times) => changeTask({ ...task, times: `${Number(times) || 1}` })}
+              style={styles.taskTimesInput}
+            />
+            <Text>{store.taskCircularTypes.find((t) => t.type === task.taskCircularType).name}</Text>
+          </LineItem>
+        </TaskItem>
         <TaskItem title='打卡行为'>
           <LineItem title='完成次数'>
             <TextInput
@@ -269,7 +305,7 @@ export default function CraeteTask() {
             value={task.remarks}
             style={styles.remarks}
             placeholder='在此输入'
-            onChange={(remarks) => changeTask({ ...task, remarks })}
+            onChangeText={(remarks) => changeTask({ ...task, remarks })}
           />
         </TaskItem>
 

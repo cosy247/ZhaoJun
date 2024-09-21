@@ -18,6 +18,11 @@ export default {
     alignItems: 'center',
     justifyContent: 'space-around'
   },
+  rowFlexSpaceEvenly: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly'
+  },
   shadow: {
     elevation: 4,
     shadowColor: '#888',

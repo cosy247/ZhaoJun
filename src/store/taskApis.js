@@ -11,12 +11,14 @@ const taskData = {
     //   isAllDay,
     //   startTime,
     //   endTime,
-    //   hasEndTime,
     //   times,
     //   autoResetTimes,
     //   overType,
     //   timesResetType,
     //   remarks,
+
+    //   clocks: [],
+    //   isOver: 0,
     // }
   },
 };
@@ -30,13 +32,13 @@ appStorage
     taskData.list = Object.values(res);
   })
   .finally(() => {
-    taskApis.isReady = true;
+    taskApis.isDataReady = true;
     readyCallbacks.forEach((callback) => callback());
     readyCallbacks.length = 0;
   });
 
 const taskApis = {
-  isReady: false,
+  isDataReady: false,
   addOrEditTask(task) {
     task.startTime = new Date(task.startTime).valueOf();
     task.endTime = new Date(task.endTime).valueOf();
@@ -56,8 +58,13 @@ const taskApis = {
       .filter((task) => task.startTime <= endValue && task.endTime >= startValue)
       .map((task) => ({ ...task }));
   },
+  getTodayTasks() {
+    const todayString = new Date().toLocaleDateString('zh').replaceAll('/', '-');
+    return taskApis.getByTimeRange(`2020-1-1 00:00:00`, `2030-1-1 23:59:59`);
+    return taskApis.getByTimeRange(`${todayString} 00:00:00`, `${todayString} 23:59:59`);
+  },
   onReady(callback) {
-    if (this.isReady) {
+    if (this.isDataReady) {
       callback();
     } else {
       readyCallbacks.push(callback);

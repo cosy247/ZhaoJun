@@ -6,6 +6,7 @@ import DayTaskPage from './pages/DayTaskPage';
 import CraeteTaskPage from './pages/CraeteTaskPage';
 import MenuTabs from './components/MenuTabs';
 import Message from './components/Message';
+import Picker from './components/Picker';
 
 const backgroundColor = '#f6f7fa';
 
@@ -23,7 +24,8 @@ export default function App() {
           craeteTask: <CraeteTaskPage />,
         }[page]
       }
-      <Message/>
+      {/* <Picker title='时间选择' data={[1, 2, 3, 4, 5]} /> */}
+      <Message />
       <MenuTabs />
     </SafeAreaView>
   );
